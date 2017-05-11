@@ -74,11 +74,12 @@ used to block the user interface with a cover and spinner (a good idea when
 you have asynchronous operations). For example...
 
 *src/strings.js*
-https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/strings.js
 
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/strings.js>
 
 *src/ducks/appBlocking.js*
-https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/ducks/appBlocking.js
+
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/ducks/appBlocking.js>
 
 *src/index.js*
 ```
@@ -113,10 +114,12 @@ yarn add prop-types
 ```
 
 *src/components/Blocking/index.jsx*
-https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/Blocking/index.jsx
+
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/Blocking/index.jsx>
 
 *src/components/Blocking/index.css*
-https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/Blocking/index.css
+
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/Blocking/index.css>
 
 *src/App.js*
 ```
