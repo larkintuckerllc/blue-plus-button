@@ -63,8 +63,10 @@ export default App;
 
 Next we add a minimal Redux implementation to project.
 
-`yarn add redux`
-`yarn add react-redux`
+```
+yarn add redux`
+yarn add react-redux`
+```
 
 Using the Ducks pattern, <https://github.com/erikras/ducks-modular-redux>,
 create a duck named *appBlocking* that will store a boolean state; will be
@@ -72,43 +74,11 @@ used to block the user interface with a cover and spinner (a good idea when
 you have asynchronous operations). For example...
 
 *src/strings.js*
-```
-export const ACTION_PREFIX = 'app/';
-```
+https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/strings.js
+
 
 *src/ducks/appBlocking.js*
-```
-import { ACTION_PREFIX } from '../strings';
-
-// API
-// REDUCER MOUNT POINT
-const reducerMountPoint = 'appBlocking';
-// ACTIONS
-export const SET_APP_BLOCKING = `${ACTION_PREFIX}SET_APP_BLOCKING`;
-// SCHEMA
-// REDUCERS
-export default (state = true, action) => {
-  switch (action.type) {
-    case SET_APP_BLOCKING:
-      return action.value;
-    default:
-      return state;
-  }
-};
-// SELECTORS
-export const getAppBlocking = (state) => state[reducerMountPoint];
-// ACTION CREATOR VALIDATORS
-const validAppBlocking = value =>
-  !(value === undefined || typeof value !== 'boolean');
-// ACTION CREATORS
-export const setAppBlocking = (value) => {
-  if (!validAppBlocking(value)) throw new Error();
-  return ({
-    type: SET_APP_BLOCKING,
-    value,
-  });
-};
-```
+https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/ducks/appBlocking.js
 
 *src/index.js*
 ```
@@ -138,43 +108,15 @@ Since we want the application to start displaying cover and spinner
 and hide once the data has been fetched, we will simulate this
 by setting a few second timeout to hide the cover and spinner.
 
-`yarn add prop-types`
+```
+yarn add prop-types
+```
 
 *src/components/Blocking/index.jsx*
-```
-import React from 'react';
-import './index.css';
-
-export default () => (
-  <div id="blocking">
-    <div id="blocking__spinner">/</div>
-  </div>
-);
-```
+https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/Blocking/index.jsx
 
 *src/components/Blocking/index.css*
-```
-#blocking {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.7);
-}
-#blocking__spinner {
-  color: rgb(255,255,255);
-  font-size: 72px;
-  animation: spin 2s infinite linear;
-}
-@keyframes spin {
-  from { transform: scale(1) rotate(0deg); }
-  to { transform: scale(1) rotate(360deg); }
-}
-```
+https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/Blocking/index.css
 
 *src/App.js*
 ```
