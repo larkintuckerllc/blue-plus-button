@@ -173,6 +173,138 @@ const store = createStore(
 ...
 ```
 
+**Implement Read Operation listValues**
+
+```
+yarn add normalizr
+yarn add reselect
+yarn add redux-thunk
+```
+
+*src/index.js*
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import appBlocking from './ducks/appBlocking';
+import listValues from './ducks/listValues';
+import App from './App';
+import './index.css';
+
+const reducers = combineReducers({
+  appBlocking,
+  listValues,
+});
+const middleware = [thunk];
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+  reducers,
+  composeEnhancers(
+    applyMiddleware(...middleware)
+  )
+);
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+```
+
+*src/apis/listValues*
+```
+const fakeDatabase = [{
+  fldListValue: 'Other kind of nuts',
+  fldSortOrder: 1,
+}, {
+  fldListValue: 'Peanuts',
+  fldSortOrder: 0,
+}];
+const delay = (ms) =>
+  new Promise(resolve => window.setTimeout(resolve, ms));
+export const get = () => delay(2000)
+  .then(() => fakeDatabase.map(o => ({ ...o })));
+export const post = () => {}; // TODO: LATER
+export const update = () => {}; // TODO: LATER
+export const del = () => {}; // TODO: LATER
+```
+
+*src/ducks/listValues*
+
+URL
+
+*/src/components/List/index.jsx*
+
+URL
+
+*/src/components/ListValue/index.jsx*
+
+URL
+
+*src/App.js*
+```
+import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
+import { connect } from 'react-redux';
+import * as fromAppBlocking from './ducks/appBlocking';
+import * as fromListValues from './ducks/listValues';
+import Blocking from './components/Blocking';
+import List from './components/List';
+import ListValue from './components/ListValue';
+import './App.css';
+
+class App extends Component {
+  componentDidMount() {
+    const { fetchListValues, setAppBlocking } = this.props;
+    fetchListValues().then(
+      () => { setAppBlocking(false); },
+      error => {
+        setAppBlocking(false);
+        // IMPORTANT AS RUNTIME ERRORS IN COMPONENT LIFECYCLE
+        // WILL SHOW UP AS AN ERROR HERE
+        if (process.env.NODE_ENV !== 'production'
+          && error.name !== 'ServerException') {
+          window.console.log(error);
+        }
+       }
+    );
+  }
+  render() {
+    const { appBlocking, listValues } = this.props;
+    return (
+      <div>
+        { appBlocking && <Blocking />}
+        <List>
+          {listValues.map(o => (
+            <ListValue
+              key={o.fldListValue}
+              fldListValue={o.fldListValue}
+            />
+          ))}
+        </List>
+      </div>
+    );
+  }
+}
+App.propTypes = {
+  appBlocking: PropTypes.bool.isRequired,
+  fetchListValues: PropTypes.func.isRequired,
+  listValues: PropTypes.array.isRequired,
+  setAppBlocking: PropTypes.func.isRequired,
+};
+export default connect(
+  state => ({
+    appBlocking: fromAppBlocking.getAppBlocking(state),
+    listValues: fromListValues.getListValues(state),
+  }), {
+    setAppBlocking: fromAppBlocking.setAppBlocking,
+    fetchListValues: fromListValues.fetchListValues,
+  }
+)(App);
+```
+
 ## License
 
 This project is licensed under the MIT License.
