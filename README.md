@@ -343,7 +343,7 @@ import Add from './components/Add';
 
 *src/ducks/listValueSelected.js*
 
-URL
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/ducks/listValueSelected.js>
 
 Updates to *src/index.js*
 ```
@@ -407,6 +407,13 @@ export default ListValue;
 
 **Implement Deleting**
 
+Ran out of steam on documentation...
+
+*src/components/Delete/index.jsx*
+
+Updated *src/App.js*
+
+Updated *src/api/listValues.js*
 
 **Implement Updating**
 

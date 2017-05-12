@@ -206,7 +206,6 @@ export const addListValue = (listValue) => (dispatch, getState) => {
     type: ADD_LIST_VALUE_REQUEST,
     listValue,
   });
-  window.console.log(post);
   return post(listValue)
     .then(
       response => {
@@ -253,28 +252,28 @@ export const updateListValue = (listValue) => (dispatch, getState) => {
 export const resetUpdateListValueError = () => ({
   type: RESET_UPDATE_LIST_VALUE_ERROR,
 });
-export const removeListValueLocal = (id) => (dispatch, getState) => {
+export const removeListValueLocal = (fldListValue) => (dispatch, getState) => {
   const state = getState();
-  const listValue = getListValue(state, id);
+  const listValue = getListValue(state, fldListValue);
   if (!validExistingListValue(state, listValue)) throw new Error();
   dispatch({
     type: REMOVE_LIST_VALUE_SUCCESS,
     response: normalize(listValue, listValueSchema),
   });
 };
-export const removeListValue = (id) => (dispatch, getState) => {
+export const removeListValue = (fldListValue) => (dispatch, getState) => {
   const state = getState();
-  const listValue = getListValue(state, id);
+  const listValue = getListValue(state, fldListValue);
   if (getIsAsync(state)) throw new Error();
   if (!validExistingListValue(state, listValue)) throw new Error();
   dispatch({
     type: REMOVE_LIST_VALUE_REQUEST,
     listValue,
   });
-  return del(listValue.id)
+  return del(listValue.fldListValue)
     .then(
       () => {
-        removeListValueLocal(listValue.id)(dispatch, getState);
+        removeListValueLocal(listValue.fldListValue)(dispatch, getState);
       },
       error => {
         dispatch({

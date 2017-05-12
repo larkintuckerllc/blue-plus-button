@@ -8,6 +8,7 @@ import Blocking from './components/Blocking';
 import List from './components/List';
 import ListValue from './components/ListValue';
 import Add from './components/Add';
+import Delete from './components/Delete';
 import './App.css';
 
 class App extends Component {
@@ -32,6 +33,7 @@ class App extends Component {
       <div>
         {appBlocking && <Blocking />}
         {listValueSelected === null && <Add />}
+        {listValueSelected !== null && <Delete />}
         <List>
           {listValues.sort((a, b) => a.fldSortOrder - b.fldSortOrder).map(o => (
             <ListValue

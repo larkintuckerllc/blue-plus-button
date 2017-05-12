@@ -19,5 +19,11 @@ export const post = (element) => delay(2000)
     fakeDatabase.push(newElement);
     return newElement;
   });
+export const del = (fldListValue) =>
+  delay(2000).then(() => {
+    const index = fakeDatabase.findIndex(o => o.fldListValue === fldListValue);
+    if (index === -1) throw new Error('404'); // MISSING ID
+    const deleted = fakeDatabase.splice(index, 1)[0];
+    return { ...deleted };
+  });
 export const update = () => {}; // TODO: LATER
-export const del = () => {}; // TODO: LATER
