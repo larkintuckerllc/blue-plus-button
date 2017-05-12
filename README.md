@@ -14,6 +14,8 @@ The system requirements are:
 
 * Node.js <https://nodejs.org/en/>
 * Yarn <https://github.com/yarnpkg/yarn>
+* Chrome browser
+* Redux DevTools (Chrome Extension) <https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd>
 
 Download and expand into a directory. From within that direction run:
 
@@ -64,8 +66,8 @@ export default App;
 Next we add a minimal Redux implementation to project.
 
 ```
-yarn add redux`
-yarn add react-redux`
+yarn add redux
+yarn add react-redux
 ```
 
 Using the Ducks pattern, <https://github.com/erikras/ducks-modular-redux>,
