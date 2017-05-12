@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import appBlocking from './ducks/appBlocking';
 import listValues from './ducks/listValues';
+import listValueSelected from './ducks/listValueSelected';
 import App from './App';
 import './index.css';
 
@@ -13,6 +14,7 @@ const reducers = combineReducers({
   appBlocking,
   form: formReducer,
   listValues,
+  listValueSelected,
 });
 const middleware = [thunk];
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

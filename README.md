@@ -311,9 +311,105 @@ export default connect(
 yarn add redux-form
 ```
 
-TODO: COMPONENT ADD
+Updates to *src/index.jsx*
+```
+...
+import { reducer as formReducer } from 'redux-form';
+...
+const reducers = combineReducers({
+  appBlocking,
+  form: formReducer,
+  listValues,
+});
+...
+```
 
-TODO: src/index.jsx
+*src/components/Add/index.jsx*
+
+<https://github.com/larkintuckerllc/blue-plus-button/tree/master/src/components/Add>
+
+Updates to *src/App.js*
+```
+...
+import Add from './components/Add';
+...
+{appBlocking && <Blocking />}
+<Add />
+<List>
+...
+```
+
+**Implement Select (for Deleting and Updating)**
+
+*src/ducks/listValueSelected.js*
+
+URL
+
+Updates to *src/index.js*
+```
+...
+import listValueSelected from './ducks/listValueSelected';
+...
+const reducers = combineReducers({
+  ...
+  listValueSelected,
+});
+...
+```
+
+Updates to *src/App.js*
+```
+const { appBlocking, listValues, listValueSelected, setListValueSelected } = this.props;
+return (
+  <div>
+    ...
+    {listValueSelected === null && <Add />}
+        <ListValue
+          ...
+          listValueSelected={listValueSelected}
+          setListValueSelected={setListValueSelected}
+          ...
+App.propTypes = {
+  ...
+  listValueSelected: PropTypes.string,
+  ...
+  setListValueSelected: PropTypes.func.isRequired,
+  ...
+  state => ({
+    ...
+    listValueSelected: fromListValueSelected.getListValueSelected(state),
+  }), {
+    ...
+    setListValueSelected: fromListValueSelected.setListValueSelected,
+    ...
+```
+
+Updates to *src/components/ListValue/index.jsx*
+```
+import React from 'react';
+import PropTypes from 'prop-types';
+
+const ListValue = ({ fldListValue, listValueSelected, setListValueSelected }) => (
+  <li
+    style={{
+      backgroundColor: listValueSelected === fldListValue ? 'yellow' : 'transparent'
+    }}
+    onClick={() => setListValueSelected(fldListValue)}
+  >{fldListValue}</li>
+);
+ListValue.propTypes = {
+  fldListValue: PropTypes.string.isRequired,
+  listValueSelected: PropTypes.string,
+  setListValueSelected: PropTypes.func.isRequired,
+}
+export default ListValue;
+```
+
+**Implement Deleting**
+
+
+**Implement Updating**
+
 
 ## License
 
