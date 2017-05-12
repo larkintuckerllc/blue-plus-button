@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import { ACTION_PREFIX } from '../strings';
 import { ServerException } from '../util/exceptions';
 // API
-import { del, get, post } from '../apis/listValues';
+import { change, del, get, post } from '../apis/listValues';
 
 // REDUCER MOUNT POINT
 const reducerMountPoint = 'listValues';
@@ -17,10 +17,11 @@ export const ADD_LIST_VALUE_REQUEST = `${ACTION_PREFIX}ADD_LIST_VALUE_REQUEST`;
 export const ADD_LIST_VALUE_SUCCESS = `${ACTION_PREFIX}ADD_LIST_VALUE_SUCCESS`;
 export const ADD_LIST_VALUE_ERROR = `${ACTION_PREFIX}ADD_LIST_VALUE_ERROR`;
 export const RESET_ADD_LIST_VALUE_ERROR = `${ACTION_PREFIX}RESET_ADD_LIST_VALUE_ERROR`;
-export const UPDATE_LIST_VALUE_REQUEST = `${ACTION_PREFIX}UPDATE_LIST_VALUE_REQUEST`;
-export const UPDATE_LIST_VALUE_SUCCESS = `${ACTION_PREFIX}UPDATE_LIST_VALUE_SUCCESS`;
-export const UPDATE_LIST_VALUE_ERROR = `${ACTION_PREFIX}UPDATE_LIST_VALUE_ERROR`;
-export const RESET_UPDATE_LIST_VALUE_ERROR = `${ACTION_PREFIX}RESET_UPDATE_LIST_VALUE_ERROR`;
+// REPLACED CHANGE WITH CHANGE
+export const CHANGE_LIST_VALUE_REQUEST = `${ACTION_PREFIX}CHANGE_LIST_VALUE_REQUEST`;
+export const CHANGE_LIST_VALUE_SUCCESS = `${ACTION_PREFIX}CHANGE_LIST_VALUE_SUCCESS`;
+export const CHANGE_LIST_VALUE_ERROR = `${ACTION_PREFIX}CHANGE_LIST_VALUE_ERROR`;
+export const RESET_CHANGE_LIST_VALUE_ERROR = `${ACTION_PREFIX}RESET_CHANGE_LIST_VALUE_ERROR`;
 export const REMOVE_LIST_VALUE_REQUEST = `${ACTION_PREFIX}REMOVE_LIST_VALUE_REQUEST`;
 export const REMOVE_LIST_VALUE_SUCCESS = `${ACTION_PREFIX}REMOVE_LIST_VALUE_SUCCESS`;
 export const REMOVE_LIST_VALUE_ERROR = `${ACTION_PREFIX}REMOVE_LIST_VALUE_ERROR`;
@@ -38,8 +39,7 @@ const listValuesSchema = new schema.Array(listValueSchema);
 const byId = (state = {}, action) => {
   switch (action.type) {
     case FETCH_LIST_VALUES_SUCCESS:
-    case ADD_LIST_VALUE_SUCCESS:
-    case UPDATE_LIST_VALUE_SUCCESS: {
+    case ADD_LIST_VALUE_SUCCESS: {
       return {
         ...state,
         ...action.response.entities.listValues,
@@ -76,16 +76,16 @@ const isAsync = (state = false, action) => {
   switch (action.type) {
     case FETCH_LIST_VALUES_REQUEST:
     case ADD_LIST_VALUE_REQUEST:
-    case UPDATE_LIST_VALUE_REQUEST:
+    case CHANGE_LIST_VALUE_REQUEST:
     case REMOVE_LIST_VALUE_REQUEST:
       return true;
     case FETCH_LIST_VALUES_SUCCESS:
     case ADD_LIST_VALUE_SUCCESS:
-    case UPDATE_LIST_VALUE_SUCCESS:
+    case CHANGE_LIST_VALUE_SUCCESS:
     case REMOVE_LIST_VALUE_SUCCESS:
     case FETCH_LIST_VALUES_ERROR:
     case ADD_LIST_VALUE_ERROR:
-    case UPDATE_LIST_VALUE_ERROR:
+    case CHANGE_LIST_VALUE_ERROR:
     case REMOVE_LIST_VALUE_ERROR:
       return false;
     default:
@@ -96,7 +96,7 @@ const asyncErrorMessage = (state = null, action) => {
   switch (action.type) {
     case FETCH_LIST_VALUES_ERROR:
     case ADD_LIST_VALUE_ERROR:
-    case UPDATE_LIST_VALUE_ERROR:
+    case CHANGE_LIST_VALUE_ERROR:
     case REMOVE_LIST_VALUE_ERROR:
       return action.message;
     case FETCH_LIST_VALUES_REQUEST:
@@ -105,9 +105,9 @@ const asyncErrorMessage = (state = null, action) => {
     case ADD_LIST_VALUE_REQUEST:
     case ADD_LIST_VALUE_SUCCESS:
     case RESET_ADD_LIST_VALUE_ERROR:
-    case UPDATE_LIST_VALUE_REQUEST:
-    case UPDATE_LIST_VALUE_SUCCESS:
-    case RESET_UPDATE_LIST_VALUE_ERROR:
+    case CHANGE_LIST_VALUE_REQUEST:
+    case CHANGE_LIST_VALUE_SUCCESS:
+    case RESET_CHANGE_LIST_VALUE_ERROR:
     case REMOVE_LIST_VALUE_REQUEST:
     case REMOVE_LIST_VALUE_SUCCESS:
     case RESET_REMOVE_LIST_VALUE_ERROR:
@@ -122,8 +122,8 @@ const lastAsync = (state = null, action) => {
       return 'fetch';
     case ADD_LIST_VALUE_REQUEST:
       return 'add';
-    case UPDATE_LIST_VALUE_REQUEST:
-      return 'update';
+    case CHANGE_LIST_VALUE_REQUEST:
+      return 'change';
     case REMOVE_LIST_VALUE_REQUEST:
       return 'remove';
     default:
@@ -223,38 +223,8 @@ export const addListValue = (listValue) => (dispatch, getState) => {
 export const resetAddListValueError = () => ({
   type: RESET_ADD_LIST_VALUE_ERROR,
 });
-/*
-// PROBLEM AS UPDATING IS UPDATING KEY
-export const updateListValueLocal = (listValue) => ({
-  type: UPDATE_LIST_VALUE_SUCCESS,
-  response: normalize(listValue, listValueSchema),
-});
-export const updateListValue = (listValue) => (dispatch, getState) => {
-  const state = getState();
-  if (getIsAsync(state)) throw new Error();
-  if (!validExistingListValue(state, listValue)) throw new Error();
-  dispatch({
-    type: UPDATE_LIST_VALUE_REQUEST,
-    listValue,
-  });
-  return put(listValue.fldListValue, listValue)
-  .then(
-      response => {
-        dispatch(updateListValueLocal(response));
-      },
-      error => {
-        dispatch({
-          type: UPDATE_LIST_VALUE_ERROR,
-          message: error.message,
-        });
-        throw new ServerException(error.message);
-      }
-    );
-};
-export const resetUpdateListValueError = () => ({
-  type: RESET_UPDATE_LIST_VALUE_ERROR,
-});
-*/
+
+
 export const removeListValueLocal = (fldListValue) => (dispatch, getState) => {
   const state = getState();
   const listValue = getListValue(state, fldListValue);
@@ -289,4 +259,40 @@ export const removeListValue = (fldListValue) => (dispatch, getState) => {
 };
 export const resetRemoveListValueError = () => ({
   type: RESET_REMOVE_LIST_VALUE_ERROR,
+});
+// IMPLEMENTED A NEW CHANGE IMPLEMENTATION
+export const changeListValue = (fldListValue, newListValue) => (dispatch, getState) => {
+  const state = getState();
+  const listValue = getListValue(state, fldListValue);
+  if (getIsAsync(state)) throw new Error();
+  if (!validExistingListValue(state, listValue)) throw new Error();
+  if (validExistingListValue(state, newListValue)) throw new Error();
+  if (!validNewListValue(state, newListValue)) throw new Error();
+  dispatch({
+    type: CHANGE_LIST_VALUE_REQUEST,
+    fldListValue,
+    newListValue,
+  });
+  return change(fldListValue, newListValue)
+  .then(
+    () => {
+      dispatch(removeListValueLocal(fldListValue));
+      dispatch(addListValueLocal(newListValue));
+      dispatch({
+        type: CHANGE_LIST_VALUE_SUCCESS,
+        fldListValue,
+        newListValue,
+      });
+    },
+    error => {
+      dispatch({
+        type: CHANGE_LIST_VALUE_ERROR,
+        message: error.message,
+      });
+      throw new ServerException(error.message);
+    }
+  );
+};
+export const resetChangeListValueError = () => ({
+  type: RESET_CHANGE_LIST_VALUE_ERROR,
 });

@@ -26,4 +26,19 @@ export const del = (fldListValue) =>
     const deleted = fakeDatabase.splice(index, 1)[0];
     return { ...deleted };
   });
-export const update = () => {}; // TODO: LATER
+export const change = (fldListValue, element) =>
+  delay(2000).then(() => {
+    const index = fakeDatabase.findIndex(o => o.fldListValue === fldListValue);
+    if (index === -1) throw new Error('404'); // MISSING ID
+    const deleted = fakeDatabase.splice(index, 1)[0];
+    if (fakeDatabase.find(o => o.fldListValue === element.fldListValue) !== undefined) {
+      throw new Error('409'); // DUPLICATE FLD LIST VALUE
+    }
+    const newElement = { ...element };
+    fakeDatabase.push(newElement);
+    return ({
+      fldListValue,
+      listValue: newElement,
+      deleted,
+    });
+  });
