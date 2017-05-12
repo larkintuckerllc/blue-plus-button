@@ -140,7 +140,7 @@ export default combineReducers({
 // ACCESSORS AKA SELECTORS
 const getIsAsync = (state) => state[reducerMountPoint].isAsync;
 const getLastAsync = (state) => state[reducerMountPoint].lastAsync;
-export const getPart = (state, id) => state[reducerMountPoint].byId[id];
+export const getListValue = (state, id) => state[reducerMountPoint].byId[id];
 const getListValuesIds = state => state[reducerMountPoint].ids;
 const getListValuesById = state => state[reducerMountPoint].byId;
 export const getListValues = createSelector(
@@ -151,25 +151,25 @@ export const getIsFetchingListValues = (state) =>
   getLastAsync(state) === 'fetch' && getIsAsync(state);
 export const getFetchListValuesErrorMessage = (state) => (
   getLastAsync(state) === 'fetch' ? state[reducerMountPoint].asyncErrorMessage : null);
-export const getIsAddingPart = (state) =>
+export const getIsAddingListValue = (state) =>
   getLastAsync(state) === 'add' && getIsAsync(state);
-export const getAddPartErrorMessage = (state) => (
+export const getAddListValueErrorMessage = (state) => (
   getLastAsync(state) === 'add' ? state[reducerMountPoint].asyncErrorMessage : null);
-export const getIsUpdatingPart = (state) =>
+export const getIsUpdatingListValue = (state) =>
   getLastAsync(state) === 'update' && getIsAsync(state);
-export const getUpdatePartErrorMessage = (state) => (
+export const getUpdateListValueErrorMessage = (state) => (
   getLastAsync(state) === 'update' ? state[reducerMountPoint].asyncErrorMessage : null);
-export const getIsRemovingPart = (state) =>
+export const getIsRemovingListValue = (state) =>
   getLastAsync(state) === 'remove' && getIsAsync(state);
-export const getRemovePartErrorMessage = (state) => (
+export const getRemoveListValueErrorMessage = (state) => (
   getLastAsync(state) === 'remove' ? state[reducerMountPoint].asyncErrorMessage : null);
 // ACTION CREATOR VALIDATORS
-const validNewPart = (state, listValue) =>
+const validNewListValue = (state, listValue) =>
   !(listValue === undefined
-  || listValue.name === undefined
-  || typeof listValue.name !== 'string');
-const validExistingPart = (state, listValue) =>
-  validNewPart(state, listValue) && getPart(state, listValue.id) !== undefined;
+  || listValue.fldListValue === undefined
+  || typeof listValue.fldListValue !== 'string');
+const validExistingListValue = (state, listValue) =>
+  validNewListValue(state, listValue) && getListValue(state, listValue.fldListValue) !== undefined;
 // ACTION CREATORS
 export const fetchListValues = () => (dispatch, getState) => {
   if (getIsAsync(getState())) throw new Error();
@@ -194,22 +194,23 @@ export const fetchListValues = () => (dispatch, getState) => {
 export const resetFetchListValuesError = () => ({
   type: RESET_FETCH_LIST_VALUES_ERROR,
 });
-export const addPartLocal = (listValue) => ({
+export const addListValueLocal = (listValue) => ({
   type: ADD_LIST_VALUE_SUCCESS,
   response: normalize(listValue, listValueSchema),
 });
-export const addPart = (listValue) => (dispatch, getState) => {
+export const addListValue = (listValue) => (dispatch, getState) => {
   const state = getState();
   if (getIsAsync(state)) throw new Error();
-  if (!validNewPart(state, listValue)) throw new Error();
+  if (!validNewListValue(state, listValue)) throw new Error();
   dispatch({
     type: ADD_LIST_VALUE_REQUEST,
     listValue,
   });
+  window.console.log(post);
   return post(listValue)
     .then(
       response => {
-        dispatch(addPartLocal(response));
+        dispatch(addListValueLocal(response));
       },
       error => {
         dispatch({
@@ -220,17 +221,17 @@ export const addPart = (listValue) => (dispatch, getState) => {
       }
     );
 };
-export const resetAddPartError = () => ({
+export const resetAddListValueError = () => ({
   type: RESET_ADD_LIST_VALUE_ERROR,
 });
-export const updatePartLocal = (listValue) => ({
+export const updateListValueLocal = (listValue) => ({
   type: UPDATE_LIST_VALUE_SUCCESS,
   response: normalize(listValue, listValueSchema),
 });
-export const updatePart = (listValue) => (dispatch, getState) => {
+export const updateListValue = (listValue) => (dispatch, getState) => {
   const state = getState();
   if (getIsAsync(state)) throw new Error();
-  if (!validExistingPart(state, listValue)) throw new Error();
+  if (!validExistingListValue(state, listValue)) throw new Error();
   dispatch({
     type: UPDATE_LIST_VALUE_REQUEST,
     listValue,
@@ -238,7 +239,7 @@ export const updatePart = (listValue) => (dispatch, getState) => {
   return put(listValue.id, listValue)
   .then(
       response => {
-        dispatch(updatePartLocal(response));
+        dispatch(updateListValueLocal(response));
       },
       error => {
         dispatch({
@@ -249,23 +250,23 @@ export const updatePart = (listValue) => (dispatch, getState) => {
       }
     );
 };
-export const resetUpdatePartError = () => ({
+export const resetUpdateListValueError = () => ({
   type: RESET_UPDATE_LIST_VALUE_ERROR,
 });
-export const removePartLocal = (id) => (dispatch, getState) => {
+export const removeListValueLocal = (id) => (dispatch, getState) => {
   const state = getState();
-  const listValue = getPart(state, id);
-  if (!validExistingPart(state, listValue)) throw new Error();
+  const listValue = getListValue(state, id);
+  if (!validExistingListValue(state, listValue)) throw new Error();
   dispatch({
     type: REMOVE_LIST_VALUE_SUCCESS,
     response: normalize(listValue, listValueSchema),
   });
 };
-export const removePart = (id) => (dispatch, getState) => {
+export const removeListValue = (id) => (dispatch, getState) => {
   const state = getState();
-  const listValue = getPart(state, id);
+  const listValue = getListValue(state, id);
   if (getIsAsync(state)) throw new Error();
-  if (!validExistingPart(state, listValue)) throw new Error();
+  if (!validExistingListValue(state, listValue)) throw new Error();
   dispatch({
     type: REMOVE_LIST_VALUE_REQUEST,
     listValue,
@@ -273,7 +274,7 @@ export const removePart = (id) => (dispatch, getState) => {
   return del(listValue.id)
     .then(
       () => {
-        removePartLocal(listValue.id)(dispatch, getState);
+        removeListValueLocal(listValue.id)(dispatch, getState);
       },
       error => {
         dispatch({
@@ -284,6 +285,6 @@ export const removePart = (id) => (dispatch, getState) => {
       }
     );
 };
-export const resetRemovePartError = () => ({
+export const resetRemoveListValueError = () => ({
   type: RESET_REMOVE_LIST_VALUE_ERROR,
 });

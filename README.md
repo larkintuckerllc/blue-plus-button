@@ -173,7 +173,7 @@ const store = createStore(
 ...
 ```
 
-**Implement Read Operation listValues**
+**Implement Read Operation**
 
 ```
 yarn add normalizr
@@ -233,15 +233,15 @@ export const del = () => {}; // TODO: LATER
 
 *src/ducks/listValues*
 
-URL
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/ducks/listValues.js>
 
 */src/components/List/index.jsx*
 
-URL
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/List/index.jsx>
 
 */src/components/ListValue/index.jsx*
 
-URL
+<https://github.com/larkintuckerllc/blue-plus-button/blob/master/src/components/ListValue/index.jsx>
 
 *src/App.js*
 ```
@@ -277,7 +277,7 @@ class App extends Component {
       <div>
         { appBlocking && <Blocking />}
         <List>
-          {listValues.map(o => (
+          {listValues.sort((a, b) => a.fldSortOrder - b.fldSortOrder).map(o => (
             <ListValue
               key={o.fldListValue}
               fldListValue={o.fldListValue}
@@ -304,6 +304,16 @@ export default connect(
   }
 )(App);
 ```
+
+**Implement Add Operation**
+
+```
+yarn add redux-form
+```
+
+TODO: COMPONENT ADD
+
+TODO: src/index.jsx
 
 ## License
 

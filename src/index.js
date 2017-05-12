@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { reducer as formReducer } from 'redux-form';
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
@@ -10,6 +11,7 @@ import './index.css';
 
 const reducers = combineReducers({
   appBlocking,
+  form: formReducer,
   listValues,
 });
 const middleware = [thunk];
