@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import { ACTION_PREFIX } from '../strings';
 import { ServerException } from '../util/exceptions';
 // API
-import { del, get, post, put } from '../apis/listValues';
+import { del, get, post } from '../apis/listValues';
 
 // REDUCER MOUNT POINT
 const reducerMountPoint = 'listValues';
@@ -223,6 +223,8 @@ export const addListValue = (listValue) => (dispatch, getState) => {
 export const resetAddListValueError = () => ({
   type: RESET_ADD_LIST_VALUE_ERROR,
 });
+/*
+// PROBLEM AS UPDATING IS UPDATING KEY
 export const updateListValueLocal = (listValue) => ({
   type: UPDATE_LIST_VALUE_SUCCESS,
   response: normalize(listValue, listValueSchema),
@@ -235,7 +237,7 @@ export const updateListValue = (listValue) => (dispatch, getState) => {
     type: UPDATE_LIST_VALUE_REQUEST,
     listValue,
   });
-  return put(listValue.id, listValue)
+  return put(listValue.fldListValue, listValue)
   .then(
       response => {
         dispatch(updateListValueLocal(response));
@@ -252,6 +254,7 @@ export const updateListValue = (listValue) => (dispatch, getState) => {
 export const resetUpdateListValueError = () => ({
   type: RESET_UPDATE_LIST_VALUE_ERROR,
 });
+*/
 export const removeListValueLocal = (fldListValue) => (dispatch, getState) => {
   const state = getState();
   const listValue = getListValue(state, fldListValue);
