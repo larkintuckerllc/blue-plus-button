@@ -8,7 +8,6 @@ const ListValue = ({ fldListValue, listValueSelected, resetChangeForm, setListVa
     }}
     onClick={() => {
       setListValueSelected(fldListValue);
-      // TODO: BUG IN NOT RE-RENDERING FORM
       resetChangeForm();
     }}
   >{fldListValue}</li>

@@ -415,8 +415,9 @@ Updated *src/App.js*
 
 Updated *src/api/listValues.js*
 
-**Implement Updating**
+**Implement Change**
 
+Ran out of steam on documentation...
 
 ## License
 

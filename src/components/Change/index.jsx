@@ -30,6 +30,7 @@ Change.propTypes = {
 };
 const ChangeForm = reduxForm({
   form: CHANGE_FORM,
+  enableReinitialize: true, // SUBTLE AND IMPORTANT
   validate: (values, props) => {
     const { listValues } = props;
     const errors = {};
