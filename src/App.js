@@ -30,7 +30,7 @@ class App extends Component {
       <div>
         { appBlocking && <Blocking />}
         <List>
-          {listValues.map(o => (
+          {listValues.sort((a, b) => a.fldSortOrder - b.fldSortOrder).map(o => (
             <ListValue
               key={o.fldListValue}
               fldListValue={o.fldListValue}
